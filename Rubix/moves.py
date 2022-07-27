@@ -1,5 +1,6 @@
 
 import Rcube
+import numpy as np
 
 # What relationship does each of the moves have on the faces
 
@@ -10,8 +11,8 @@ def rotateFace(cube,faceColor):
 
 
 def rotateFace(cube,face):
-    
-    mat = cube.faceList[face].faceNum
+    face = cube.faceList[face]
+    mat = face.faceNum
     # Always gonna be a 3*3 matrix
     N = 3
     
@@ -24,21 +25,64 @@ def rotateFace(cube,face):
             mat[N - 1 - i][N - 1 - j] = mat[j][N - 1 - i]
             mat[j][N - 1 - i] = temp
 
-    adjList = returnAdjFaces(face)
+    #mat is the easy part, now need to account for other portions of the rotation
+    print("Color",face.color)
+    
+    adjIdx = returnAdjIdx(face.color)
+    print(adjIdx)
+    
+    print("Above Face: ",cube.faceList[adjIdx[0]].faceNum[2,:])
+    
+    aboveFace = cube.faceList[adjIdx[0]].faceNum
+    print("aboveFace",aboveFace)
+    rightFace = cube.faceList[adjIdx[1]].faceNum
+    print("rightFace",rightFace)
+    belowFace = cube.faceList[adjIdx[2]].faceNum
+    print("belowFace",belowFace)
+    leftFace = cube.faceList[adjIdx[3]].faceNum
+    print("leftFace",leftFace)
+    # Save the value about to be erased
+    
+    aboveRotate = aboveFace[2,:]
+    
+    print("aboveRotate",aboveRotate)
+    print(rightFace[:,0])
+    rightRotate = rightFace[:,0]
+    print("address of rightRotate:", id(rightRotate))
+    rightFace[:,0] = aboveRotate
+    print("rightFace[:,0]:", id(rightFace[:,0]))
+    
+    belowRotate = belowFace[0,:].reshape(1,-1)
+    print(rightRotate)
+    belowFace[0,:] = rightRotate
+    
+    leftRotate = leftFace[:,2].reshape(1,-1)
+    leftFace[:,2] = belowRotate
+    
+    aboveFace[2,:] = leftRotate
+    
+    
+    
+    
+    #cube.faceList[adjIdx[0]].faceNum[:,0].reshape(-1,1)
+    #print(test)
+    
+    
     # at this point in need to rotate all of the surrounding pieces by 90
     # degrees, how do I know the orientation of the cube at this point?
 
-def returnAdjFaces(face):
+# Returns index's of the surrounding faces to a face in clockwise orientation, starting on top
+def returnAdjIdx(face):
     face = 'W'
     
     # Might find better way than hardcoding but will also never change
     adjDict = {
-        'O': ['G','Y','B','W'],
-        'Y':['G','R','B','O'],
-        'W':['G','R','Y','O'],
-        'G':['W','R','Y','O'],
-        'B':['Y','R','W','O'],
-        'R':['Y','G','W','B']
+        'O': [5,4,3,2],
+        'Y':[0,3,5,4],
+        'W':[0,3,5,1],
+        'G':[0,3,5,2],
+        'B':['','R','W','O'],
+        'R':[2,3,0,1]
     }
 
             
