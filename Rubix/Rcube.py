@@ -71,7 +71,7 @@ class cube:
         print("Printing current number state of the cube...")
         
         for j in range(3):
-            print("      ",end="")
+            print("         ",end="")
             for k in range(3):
                     print(self.faceList[0].faceNum[j,k],end=" ")
             print()     
@@ -83,7 +83,7 @@ class cube:
             print()
 
         for j in range(3):
-            print("      ",end="")
+            print("         ",end="")
             for k in range(3):
                     print(self.faceList[5].faceNum[j,k],end=" ")
             print()     

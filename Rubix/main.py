@@ -10,9 +10,15 @@ rubix.printColors()
 rubix.printNums()
 #,rubix.faceList[1].faceNum)
 print("Rotating...")
-face = 1
+face = 2
 
-moves.rotateFace(rubix,face)
+moves.rotateFaceClockwise(rubix,face)
+print("Rotating 2...")
+# moves.rotateFace(rubix,face)
+# print("Rotating 3...")
+# moves.rotateFace(rubix,face)
+# print("Rotating 4...")
+# moves.rotateFace(rubix,face)
 
 #white_face = Rcube.face('W',1,)
 rubix.printColors()

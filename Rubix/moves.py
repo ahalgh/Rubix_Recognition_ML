@@ -1,33 +1,33 @@
 
 import Rcube
 import numpy as np
+import copy
 
 # What relationship does each of the moves have on the faces
 
 
-def rotateFace(cube,faceColor):
+def rotateFaceCounterClockwise(cube,faceColor):
    pass 
 
 
 
-def rotateFace(cube,face):
+def rotateFaceClockwise(cube,face):
+
     face = cube.faceList[face]
     mat = face.faceNum
-    # Always gonna be a 3*3 matrix
-    N = 3
     
-    for i in range(N // 2):
-        for j in range(i, N - i - 1):
-            temp = mat[i][j]
-            mat[i][j] = mat[N-1-j][i]
-            mat[i][j] = mat[N - 1 - j][i]
-            mat[N - 1 - j][i] = mat[N - 1 - i][N - 1 - j]
-            mat[N - 1 - i][N - 1 - j] = mat[j][N - 1 - i]
-            mat[j][N - 1 - i] = temp
+    # Rotating a 3*3 matrix counterclockwise
+    for i in range(0, 2):
+        temp = mat[0][i]
+        mat[0][i] = mat[2-i][0]
+        mat[2-i][0] = mat[2][2-i]
+        mat[2][2-i] = mat[i][2]
+        mat[i][2] = temp
 
     #mat is the easy part, now need to account for other portions of the rotation
     print("Color",face.color)
     
+    # Returns indexs necessary for counterclockwise rotation
     adjIdx = returnAdjIdx(face.color)
     print(adjIdx)
     
@@ -42,24 +42,28 @@ def rotateFace(cube,face):
     leftFace = cube.faceList[adjIdx[3]].faceNum
     print("leftFace",leftFace)
     # Save the value about to be erased
+    print("######################################")
     
-    aboveRotate = aboveFace[2,:]
+    # Copy Right side of matrix
+    rightRotate = copy.copy(rightFace[:,0])
     
-    print("aboveRotate",aboveRotate)
-    print(rightFace[:,0])
-    rightRotate = rightFace[:,0]
-    print("address of rightRotate:", id(rightRotate))
-    rightFace[:,0] = aboveRotate
-    print("rightFace[:,0]:", id(rightFace[:,0]))
+    # Overwrite Right with Above
+    rightFace[:,0] = aboveFace[2,:]
     
-    belowRotate = belowFace[0,:].reshape(1,-1)
-    print(rightRotate)
-    belowFace[0,:] = rightRotate
+    # Copy Bottom side of matrix
+    belowRotate = copy.copy(belowFace[0,:].reshape(1,-1))
     
-    leftRotate = leftFace[:,2].reshape(1,-1)
+    # Overwrite bottom with Right
+    belowFace[0,:] = np.flip(rightRotate)
+    
+    # Copy left side of matrix
+    leftRotate = copy.copy(leftFace[:,2])
+    
+    # Overwrite left with bottom
     leftFace[:,2] = belowRotate
     
-    aboveFace[2,:] = leftRotate
+    # Overwrite top with left
+    aboveFace[2,:] = np.flip(leftRotate)
     
     
     
@@ -77,15 +81,15 @@ def returnAdjIdx(face):
     
     # Might find better way than hardcoding but will also never change
     adjDict = {
-        'O': [5,4,3,2],
-        'Y':[0,3,5,4],
+        'O': [5,3,2,1],
+        'Y':[0,2,5,4],
         'W':[0,3,5,1],
-        'G':[0,3,5,2],
-        'B':['','R','W','O'],
+        'G':[0,4,5,2],
+        'B':[0,1,5,3],
         'R':[2,3,0,1]
     }
 
-            
+    # 6 different rotation types, how to account        
     return adjDict[face]
 
 
